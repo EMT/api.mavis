@@ -1,0 +1,9 @@
+libraries/*
+!libraries/lithium
+!libraries/li3_*
+resources/tmp/*
+app/resources/tmp/*
+migrations/last_migration.txt
+.sass-cache
+.sass-cache/*
+.DS_Store
