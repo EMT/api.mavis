@@ -6,9 +6,9 @@
 <h2>Endpoints</h2>
 
 <pre>
-	/actions/put?key_id=[key ID]&type=[on/off] 
+	PUT/POST /actions/put?key_id=[key ID]&type=[on/off] 
 	(both params are required)
 
-	/actions/get?from=[unix timestamp in seconds]&to=[unix timestamp in seconds] 
+	GET /actions/get?from=[unix timestamp in seconds]&to=[unix timestamp in seconds] 
 	(the `from` param is required)
 </pre>

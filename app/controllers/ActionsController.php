@@ -8,29 +8,31 @@ use lithium\action\DispatchException;
 class ActionsController extends \lithium\action\Controller {
 
 	public function put() {
-		$data = $this->request->query;
-
 		$action = null;
+		
+		if (!empty($this->request->data)) {
+			$data = $this->request->data;
 
-		if ($data['type'] === 'on') {
-			// make sure this key isn’t already on
-			if (!Actions::count(['conditions' => ['key_id' => $data['key_id'], 'off' => 0], 'limit' => 1])) {
-				$action = Actions::create($data + ['on' => time()]);
-				$action->save();
+			if ($data['type'] === 'on') {
+				// make sure this key isn’t already on
+				if (!Actions::count(['conditions' => ['key_id' => $data['key_id'], 'off' => 0], 'limit' => 1])) {
+					$action = Actions::create($data + ['on' => time()]);
+					$action->save();
+				}
 			}
-		}
-		else if ($data['type'] === 'off') {
-			$action = Actions::first([
-				'conditions' => [
-					'key_id' => $data['key_id'],
-					'off' => 0
-				],
-				'order' => ['on' => 'DESC']
-			]);
+			else if ($data['type'] === 'off') {
+				$action = Actions::first([
+					'conditions' => [
+						'key_id' => $data['key_id'],
+						'off' => 0
+					],
+					'order' => ['on' => 'DESC']
+				]);
 
-			if ($action) {
-				$action->off = time();
-				$action->save();
+				if ($action) {
+					$action->off = time();
+					$action->save();
+				}
 			}
 		}
 
