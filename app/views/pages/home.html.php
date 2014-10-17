@@ -7,7 +7,7 @@
 
 <pre>
 	PUT/POST /actions/put
-	  key_id[key ID]
+	  key_id=[key ID]
 	  type=[on/off] 
 	(both params are required)
 

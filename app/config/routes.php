@@ -18,19 +18,90 @@
  */
 use lithium\net\http\Router;
 use lithium\core\Environment;
+use lithium\action\Response;
+use app\models\Actions;
 
-/**
- * With globalization enabled a localized route is configured by connecting a
- * continuation route. Once the route has been connected, all the other
- * application routes become localized and may now carry a locale.
- *
- * Requests to routes like `/en/posts/edit/1138` or `/fr/posts/edit/1138` will
- * carry a locale, while `/posts/edit/1138` keeps on working as it did before.
- */
-if ($locales = Environment::get('locales')) {
-	$template = '/{:locale:' . join('|', array_keys($locales)) . '}/{:args}';
-	Router::connect($template, array(), array('continue' => true));
-}
+
+Router::connect('/actions/put.json', 'Actions::put');
+Router::connect('/actions/get.json', 'Actions::get');
+
+
+// Router::connect('/actions/put.json', [], function($request) {
+// 	$action = null;
+
+// 	if (!empty($request->data)) {
+// 		$data = $request->data;
+
+// 		if ($data['type'] === 'on') {
+// 			// make sure this key isn’t already on
+// 			if (!Actions::count(['conditions' => ['key_id' => $data['key_id'], 'off' => 0], 'limit' => 1])) {
+// 				$action = Actions::create($data + ['on' => time()]);
+// 				$action->save();
+// 			}
+// 		}
+// 		else if ($data['type'] === 'off') {
+// 			$action = Actions::first([
+// 				'conditions' => [
+// 					'key_id' => $data['key_id'],
+// 					'off' => 0
+// 				],
+// 				'order' => ['on' => 'DESC']
+// 			]);
+
+// 			if ($action) {
+// 				$action->off = time();
+// 				$action->save();
+// 			}
+// 		}
+// 	}
+
+// 	return new Response([
+// 		'headers' => [
+// 			'Access-Control-Allow-Origin' => '*',
+// 			'Content-type' => 'application/json'
+// 		],
+// 		'status'=> ($action && $action->id) ? 200 : 500,
+// 		'data' => [
+// 			'response' => ($action && $action->id) ? 'true' : 'false'
+// 		],
+// 		'type' => 'json'
+// 	]);
+// });
+
+
+// Router::connect('/actions/get.json', [], function($request) {
+// 	$timeout_limit = 30; // timeout limit in seconds
+
+// 	// tidy up any open keys that have reached the timeout limit
+// 	$query = 'UPDATE actions SET `off` = `on` + ' . $timeout_limit . ' ';
+// 	$query .= 'WHERE `on` <= ' . (time() - $timeout_limit) . ' AND `off` = 0';
+// 	Actions::connection()->read($query);
+
+// 	$conditions = [
+// 		'on' => ['>=' => $request->query['from']],
+// 		'off' => ['>' => 0]
+// 	];
+
+// 	if (!empty($request->query['to'])) {
+// 		$conditions = ['off' => ['<=' => $request->query['to']]] + $conditions;
+// 	}
+
+// 	$actions = Actions::all([
+// 		'conditions' => $conditions,
+// 		'order' => ['on' => 'ASC']
+// 	]);
+
+// 	return new Response([
+// 		'headers' => [
+// 			'Access-Control-Allow-Origin' => '*',
+// 			'Content-type' => 'application/json'
+// 		],
+// 		'status'=> 200,
+// 		'data' => $actions->data(),
+// 		'type' => 'json'
+// 	]);
+// });
+
 
 /**
  * Here, we are connecting `'/'` (the base path) to controller called `'Pages'`,
@@ -42,11 +113,6 @@ if ($locales = Environment::get('locales')) {
  */
 Router::connect('/', 'Pages::view');
 
-/**
- * Connect the rest of `PagesController`'s URLs. This will route URLs like `/pages/about` to
- * `PagesController`, rendering `/views/pages/about.html.php` as a static page.
- */
-Router::connect('/pages/{:args}', 'Pages::view');
 
 /**
  * Add the testing routes. These routes are only connected in non-production environments, and allow
@@ -59,39 +125,6 @@ if (!Environment::is('production')) {
 	Router::connect('/test', array('controller' => 'lithium\test\Controller'));
 }
 
-/**
- * ### Database object routes
- *
- * The routes below are used primarily for accessing database objects, where `{:id}` corresponds to
- * the primary key of the database object, and can be accessed in the controller as
- * `$this->request->id`.
- *
- * If you're using a relational database, such as MySQL, SQLite or Postgres, where the primary key
- * is an integer, uncomment the routes below to enable URLs like `/posts/edit/1138`,
- * `/posts/view/1138.json`, etc.
- */
-Router::connect('/{:controller}/{:action}/{:id:\d+}.{:type}', array('id' => null));
-Router::connect('/{:controller}/{:action}/{:id:\d+}');
 
-/**
- * If you're using a document-oriented database, such as CouchDB or MongoDB, or another type of
- * database which uses 24-character hexidecimal values as primary keys, uncomment the routes below.
- */
-// Router::connect('/{:controller}/{:action}/{:id:[0-9a-f]{24}}.{:type}', array('id' => null));
-// Router::connect('/{:controller}/{:action}/{:id:[0-9a-f]{24}}');
-
-/**
- * Finally, connect the default route. This route acts as a catch-all, intercepting requests in the
- * following forms:
- *
- * - `/foo/bar`: Routes to `FooController::bar()` with no parameters passed.
- * - `/foo/bar/param1/param2`: Routes to `FooController::bar('param1, 'param2')`.
- * - `/foo`: Routes to `FooController::index()`, since `'index'` is assumed to be the action if none
- *   is otherwise specified.
- *
- * In almost all cases, custom routes should be added above this one, since route-matching works in
- * a top-down fashion.
- */
-Router::connect('/{:controller}/{:action}/{:args}');
 
 ?>

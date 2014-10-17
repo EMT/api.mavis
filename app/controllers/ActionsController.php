@@ -9,7 +9,7 @@ class ActionsController extends \lithium\action\Controller {
 
 	public function put() {
 		$action = null;
-		
+
 		if (!empty($this->request->data)) {
 			$data = $this->request->data;
 
@@ -35,6 +35,8 @@ class ActionsController extends \lithium\action\Controller {
 				}
 			}
 		}
+
+		$this->response->headers('Access-Control-Allow-Origin', '*');
 
 		return $this->render([
 			'json' => [
@@ -66,7 +68,12 @@ class ActionsController extends \lithium\action\Controller {
 			'order' => ['on' => 'ASC']
 		]);
 
-		return $this->render(['json' => $actions->data(), 'status'=> 200]);
+		$this->response->headers('Access-Control-Allow-Origin', '*');
+
+		return $this->render([
+			'json' => $actions->data(), 
+			'status'=> 200
+		]);
 	}
 }
 
