@@ -36,6 +36,7 @@
  * @see lithium\core\Environment
  */
 use lithium\data\Connections;
+use lithium\core\Environment;
 
 /**
  * Uncomment this configuration to use MongoDB as your default database.
@@ -59,14 +60,11 @@ use lithium\data\Connections;
 /**
  * Uncomment this configuration to use MySQL as your default database.
  */
-Connections::add('default', array(
+Connections::add('default', [
 	'type' => 'database',
 	'adapter' => 'MySql',
 	'host' => 'localhost',
-	'login' => 'mavis-user',
-	'password' => 'NAGdBaEqfGnnKTy6',
-	'database' => 'mavis',
 	'encoding' => 'UTF-8'
-));
+] + Environment::get('db'));
 
 ?>
