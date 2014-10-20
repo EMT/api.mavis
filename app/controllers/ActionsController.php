@@ -42,7 +42,7 @@ class ActionsController extends \lithium\action\Controller {
 			'json' => [
 				'response' => ($action && $action->id) ? 'true' : 'false'
 			], 
-			'status'=> ($action && $action->id) ? 200 : 500
+			'status'=> 200
 		]);
 	}
 
