@@ -67,4 +67,5 @@ Connections::add('default', [
 	'encoding' => 'UTF-8'
 ] + Environment::get('db'));
 
+
 ?>

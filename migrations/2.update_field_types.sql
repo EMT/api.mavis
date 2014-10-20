@@ -1,0 +1,3 @@
+ALTER TABLE `actions` 
+	ALTER COLUMN `on` BIGINT(20)
+	ALTER COLUMN `off` BIGINT(20);

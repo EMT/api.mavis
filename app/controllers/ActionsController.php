@@ -16,7 +16,7 @@ class ActionsController extends \lithium\action\Controller {
 			if ($data['type'] === 'on') {
 				// make sure this key isn’t already on
 				if (!Actions::count(['conditions' => ['key_id' => $data['key_id'], 'off' => 0], 'limit' => 1])) {
-					$action = Actions::create($data + ['on' => time()]);
+					$action = Actions::create($data + ['on' => microtime()]);
 					$action->save();
 				}
 			}
@@ -30,7 +30,7 @@ class ActionsController extends \lithium\action\Controller {
 				]);
 
 				if ($action) {
-					$action->off = time();
+					$action->off = microtime();
 					$action->save();
 				}
 			}
@@ -51,7 +51,7 @@ class ActionsController extends \lithium\action\Controller {
 
 		// tidy up any open keys that have reached the timeout limit
 		$query = 'UPDATE actions SET `off` = `on` + ' . $timeout_limit . ' ';
-		$query .= 'WHERE `on` <= ' . (time() - $timeout_limit) . ' AND `off` = 0';
+		$query .= 'WHERE `on` <= ' . (microtime() - $timeout_limit) . ' AND `off` = 0';
 		Actions::connection()->read($query);
 
 		$conditions = [
@@ -65,7 +65,12 @@ class ActionsController extends \lithium\action\Controller {
 
 		$actions = Actions::all([
 			'conditions' => $conditions,
-			'order' => ['on' => 'ASC']
+			'order' => ['on' => 'ASC'],
+			'fields' => [
+				'key_id',
+				'`on`',
+				'`off` - `on` AS duration'
+			]
 		]);
 
 		$this->response->headers('Access-Control-Allow-Origin', '*');
