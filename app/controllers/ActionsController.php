@@ -16,7 +16,7 @@ class ActionsController extends \lithium\action\Controller {
 			if ($data['type'] === 'on') {
 				// make sure this key isn’t already on
 				if (!Actions::count(['conditions' => ['key_id' => $data['key_id'], 'off' => 0], 'limit' => 1])) {
-					$action = Actions::create($data + ['on' => microtime()]);
+					$action = Actions::create($data + ['on' => $this->_getTime()]);
 					$action->save();
 				}
 			}
@@ -30,7 +30,7 @@ class ActionsController extends \lithium\action\Controller {
 				]);
 
 				if ($action) {
-					$action->off = microtime();
+					$action->off = $this->_getTime();
 					$action->save();
 				}
 			}
@@ -51,7 +51,7 @@ class ActionsController extends \lithium\action\Controller {
 
 		// tidy up any open keys that have reached the timeout limit
 		$query = 'UPDATE actions SET `off` = `on` + ' . $timeout_limit . ' ';
-		$query .= 'WHERE `on` <= ' . (microtime() - $timeout_limit) . ' AND `off` = 0';
+		$query .= 'WHERE `on` <= ' . ($this->_getTime() - $timeout_limit) . ' AND `off` = 0';
 		Actions::connection()->read($query);
 
 		$conditions = [
@@ -79,6 +79,11 @@ class ActionsController extends \lithium\action\Controller {
 			'json' => $actions->data(), 
 			'status'=> 200
 		]);
+	}
+
+
+	public function _getTime() {
+		return round(microtime(true) * 1000);
 	}
 }
 
