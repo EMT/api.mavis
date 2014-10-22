@@ -50,10 +50,10 @@ class ActionsController extends \lithium\action\Controller {
 		$timeout_limit = 30000; // timeout limit in seconds
 
 		// tidy up any open keys that have reached the timeout limit
-		$query = 'UPDATE actions SET `off` = `on` + ' . $timeout_limit . ' ';
-		$query .= 'WHERE `on` <= ' . ($this->_getTime() - $timeout_limit) . ' ';
-		$query .= 'AND (`off` = 0 || `off` - `on` > ' . $timeout_limit . ')';
-		Actions::connection()->read($query);
+		// $query = 'UPDATE actions SET `off` = `on` + ' . $timeout_limit . ' ';
+		// $query .= 'WHERE `on` <= ' . ($this->_getTime() - $timeout_limit) . ' ';
+		// $query .= 'AND (`off` = 0 || `off` - `on` > ' . $timeout_limit . ')';
+		// Actions::connection()->read($query);
 
 		$conditions = [
 			'on' => ['>=' => $this->request->query['from']],
