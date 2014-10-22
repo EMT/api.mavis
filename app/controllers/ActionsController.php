@@ -73,8 +73,9 @@ class ActionsController extends \lithium\action\Controller {
 			'conditions' => $conditions,
 			'order' => ['on' => 'ASC'],
 			'fields' => [
+				'id',
 				'key_id',
-				'`on`',
+				'on',
 				'`off` - `on` AS duration'
 			]
 		]);
