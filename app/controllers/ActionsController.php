@@ -36,7 +36,7 @@ class ActionsController extends \lithium\action\Controller {
 			}
 		}
 
-		$this->response->headers('Access-Control-Allow-Origin', '*');
+		// $this->response->headers('Access-Control-Allow-Origin', '*');
 
 		return $this->render([
 			'json' => [
@@ -74,7 +74,7 @@ class ActionsController extends \lithium\action\Controller {
 			]
 		]);
 
-		$this->response->headers('Access-Control-Allow-Origin', '*');
+		// $this->response->headers('Access-Control-Allow-Origin', '*');
 
 		return $this->render([
 			'json' => $actions->data(), 
