@@ -61,9 +61,11 @@ class ActionsController extends \lithium\action\Controller {
 		];
 
 		if (!empty($this->request->query['to'])) {
-			$conditions = ['off' => [
-				'<=' => $this->request->query['to']],
-				'>' => 0
+			$conditions = [
+				'off' => [
+					'<=' => $this->request->query['to'],
+					'>' => ['>' => 0]
+				]
 			] + $conditions;
 		}
 
