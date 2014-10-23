@@ -36,8 +36,6 @@ class ActionsController extends \lithium\action\Controller {
 			}
 		}
 
-		// $this->response->headers('Access-Control-Allow-Origin', '*');
-
 		return $this->render([
 			'json' => [
 				'response' => ($action && $action->id) ? 'true' : 'false'
@@ -56,9 +54,14 @@ class ActionsController extends \lithium\action\Controller {
 		// Actions::connection()->read($query);
 
 		$conditions = [
-			'on' => ['>=' => $this->request->query['from']],
 			'off' => ['>' => 0]
 		];
+
+		if (!empty($this->request->query['from'])) {
+			$conditions = [
+				'on' => ['>=' => $this->request->query['from']]
+			] + $conditions;
+		}
 
 		if (!empty($this->request->query['to'])) {
 			$conditions = [
@@ -71,19 +74,26 @@ class ActionsController extends \lithium\action\Controller {
 
 		$actions = Actions::all([
 			'conditions' => $conditions,
-			'order' => ['on' => 'ASC'],
+			'order' => ['on' => (empty($conditions['on'])) ? 'DESC' : 'ASC'],
 			'fields' => [
 				'id',
 				'key_id',
 				'on',
 				'`off` - `on` AS duration'
-			]
+			],
+			'limit' => (!empty($this->request->query['limit'])) ? $this->request->query['limit'] : false
 		]);
 
-		// $this->response->headers('Access-Control-Allow-Origin', '*');
+		$actions = $actions->data();
+		
+		if ($actions && empty($conditions['on'])) {
+			usort($actions, function($a, $b) {
+			    return $a['on'] - $b['on'];
+			});
+		}
 
 		return $this->render([
-			'json' => $actions->data(), 
+			'json' => $actions, 
 			'status'=> 200
 		]);
 	}
