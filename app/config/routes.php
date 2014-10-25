@@ -24,6 +24,8 @@ use app\models\Actions;
 
 Router::connect('/actions/put.json', 'Actions::put');
 Router::connect('/actions/get.json', 'Actions::get');
+Router::connect('/actions/tidy', 'Actions::tidy');
+
 
 
 // Router::connect('/actions/put.json', [], function($request) {

@@ -45,13 +45,6 @@ class ActionsController extends \lithium\action\Controller {
 	}
 
 	public function get() {
-		$timeout_limit = 30000; // timeout limit in seconds
-
-		// tidy up any open keys that have reached the timeout limit
-		// $query = 'UPDATE actions SET `off` = `on` + ' . $timeout_limit . ' ';
-		// $query .= 'WHERE `on` <= ' . ($this->_getTime() - $timeout_limit) . ' ';
-		// $query .= 'AND (`off` = 0 || `off` - `on` > ' . $timeout_limit . ')';
-		// Actions::connection()->read($query);
 
 		$conditions = [
 			'off' => ['>' => 0]
@@ -96,6 +89,29 @@ class ActionsController extends \lithium\action\Controller {
 			'json' => $actions, 
 			'status'=> 200
 		]);
+	}
+
+
+	public function tidy() {
+		$timeout_limit = 30000; // timeout limit in milliseconds
+		// tidy up any open keys that have reached the timeout limit
+		var_dump('Removing long notes…');
+		var_dump(Actions::remove(['`off` - `on`' => ['>' => 60000]]));
+		var_dump('Cutting longish notes…');
+		// var_dump(Actions::update('`off` = `on`', [
+		// 	'on' => ['<=' => $this->_getTime() - $timeout_limit],
+		// 	'or' => [
+		// 		'`off` - `on`' => ['>' => $timeout_limit],
+		// 		'off' => 0
+		// 	]
+		// ]));
+
+		$query = 'UPDATE actions SET `off` = `on` + ' . $timeout_limit . ' ';
+		$query .= 'WHERE `on` <= ' . ($this->_getTime() - $timeout_limit) . ' ';
+		$query .= 'AND (`off` = 0 || `off` - `on` > ' . $timeout_limit . ')';
+		Actions::connection()->read($query);
+		
+		exit();
 	}
 
 
