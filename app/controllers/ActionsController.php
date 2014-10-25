@@ -86,7 +86,7 @@ class ActionsController extends \lithium\action\Controller {
 
 		$actions = $actions->data();
 		
-		if ($actions && empty($conditions['on'])) {
+		if ($actions) {
 			usort($actions, function($a, $b) {
 			    return $a['on'] - $b['on'];
 			});
